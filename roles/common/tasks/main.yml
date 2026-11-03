@@ -1,0 +1,22 @@
+---
+- name: Load pre-reqs tasks
+  ansible.builtin.import_tasks: pre-reqs.yml
+
+- name: Install Node.js and build
+  ansible.builtin.import_tasks: nodejs-install.yml
+
+- name: Load MySQL schema if defined
+  ansible.builtin.import_tasks: mysql-schema.yml
+  when: schema_files is defined
+
+- name: Set ownership and permissions
+  ansible.builtin.file:
+    path: /app
+    owner: appuser
+    group: appuser
+    recurse: yes
+    mode: 'o-rwx'
+
+- name: Copy systemd unit and start service
+  ansible.builtin.import_tasks: systemd.yml
+  when: systemd_unit is not defined or systemd_unit

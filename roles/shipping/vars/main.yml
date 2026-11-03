@@ -1,0 +1,3 @@
+schema_files:
+  - db/schema.sql
+  - db/app-user.sql

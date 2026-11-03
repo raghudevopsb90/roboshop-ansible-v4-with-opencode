@@ -1,0 +1,16 @@
+---
+- name: Copy systemd unit file
+  ansible.builtin.template:
+    src: "{{ component_name }}.service.j2"
+    dest: "/etc/systemd/system/{{ component_name }}.service"
+    mode: '0644'
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Enable and restart service
+  ansible.builtin.systemd:
+    name: "{{ component_name }}"
+    enabled: yes
+    state: restarted

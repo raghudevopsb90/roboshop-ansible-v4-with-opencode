@@ -1,0 +1,14 @@
+---
+- name: Install Node.js 20
+  ansible.builtin.shell: |
+    curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+    dnf install -y nodejs
+  changed_when: true
+
+- name: Install npm dependencies
+  ansible.builtin.shell: |
+    cd /app
+    npm install --production
+  args:
+    chdir: /app
+  become_user: appuser

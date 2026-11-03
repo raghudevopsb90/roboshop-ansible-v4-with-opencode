@@ -1,0 +1,57 @@
+---
+- name: Load pre-reqs tasks
+  ansible.builtin.import_tasks: pre-reqs.yml
+
+- name: Install Go 1.22
+  ansible.builtin.dnf:
+    name:
+      - golang
+      - git
+      - mysql8.4
+    state: present
+
+- name: Verify Go version
+  ansible.builtin.shell: go version
+  register: go_version
+  changed_when: false
+
+- name: Load MySQL schema if defined
+  ansible.builtin.import_tasks: mysql-schema.yml
+  when: schema_files is defined
+
+- name: Tidy Go modules
+  ansible.builtin.shell: |
+    export HOME=/app
+    export GOPATH=/app/.go
+    export GOMODCACHE=/app/.go/pkg/mod
+    export GOCACHE=/app/.cache/go-build
+
+    mkdir -p /app/.go/pkg/mod
+    mkdir -p /app/.cache/go-build
+
+    go env -w GOPATH=/app/.go
+    go env -w GOMODCACHE=/app/.go/pkg/mod
+    go env -w GOCACHE=/app/.cache/go-build
+    go mod tidy
+  args:
+    chdir: /app
+  become_user: appuser
+
+- name: Build Go binary
+  ansible.builtin.shell: |
+    cd /app
+    CGO_ENABLED=0 go build -o /app/{{ component_name }} .
+  args:
+    chdir: /app
+  become_user: appuser
+
+- name: Set ownership and permissions
+  ansible.builtin.file:
+    path: /app
+    owner: appuser
+    group: appuser
+    recurse: yes
+    mode: 'o-rwx'
+
+- name: Copy systemd unit and start service
+  ansible.builtin.import_tasks: systemd.yml

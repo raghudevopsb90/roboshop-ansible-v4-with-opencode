@@ -1,0 +1,2 @@
+extra_pip_packages:
+  - cryptography

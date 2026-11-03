@@ -1,0 +1,30 @@
+---
+- name: Install Valkey
+  ansible.builtin.dnf:
+    name: valkey
+    state: present
+
+- name: Enable and start Valkey
+  ansible.builtin.systemd:
+    name: valkey
+    enabled: yes
+    state: started
+
+- name: Configure Valkey to bind to all interfaces
+  ansible.builtin.lineinfile:
+    path: /etc/valkey/valkey.conf
+    regexp: '^bind 127.0.0.1'
+    line: 'bind 0.0.0.0'
+    backup: yes
+
+- name: Set protected-mode to no
+  ansible.builtin.lineinfile:
+    path: /etc/valkey/valkey.conf
+    regexp: '^protected-mode yes'
+    line: 'protected-mode no'
+    backup: yes
+
+- name: Restart Valkey
+  ansible.builtin.systemd:
+    name: valkey
+    state: restarted

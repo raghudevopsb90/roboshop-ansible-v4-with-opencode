@@ -1,0 +1,48 @@
+---
+- name: Load pre-reqs tasks
+  ansible.builtin.import_tasks: pre-reqs.yml
+
+- name: Install Java 21
+  ansible.builtin.dnf:
+    name:
+      - java-21-openjdk
+      - java-21-openjdk-devel
+      - maven
+      - mysql8.4
+    state: present
+
+- name: Verify Java version
+  ansible.builtin.shell: java -version
+  register: java_version
+  changed_when: false
+
+- name: Load MySQL schema if defined
+  ansible.builtin.import_tasks: mysql-schema.yml
+  when: schema_files is defined
+
+- name: Build with Maven
+  ansible.builtin.shell: |
+    cd /app
+    mvn clean package -DskipTests
+  args:
+    chdir: /app
+  become_user: appuser
+
+- name: Copy jar to /app
+  ansible.builtin.shell: |
+    cd /app
+    cp target/{{ component_name }}.jar /app/{{ component_name }}.jar
+  args:
+    chdir: /app
+  become_user: appuser
+
+- name: Set ownership and permissions
+  ansible.builtin.file:
+    path: /app
+    owner: appuser
+    group: appuser
+    recurse: yes
+    mode: 'o-rwx'
+
+- name: Copy systemd unit and start service
+  ansible.builtin.import_tasks: systemd.yml

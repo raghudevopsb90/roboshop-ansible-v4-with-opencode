@@ -1,0 +1,12 @@
+---
+- name: Install MySQL client
+  ansible.builtin.dnf:
+    name: mysql8.4
+    state: present
+
+- name: Load MySQL schema
+  ansible.builtin.shell: |
+    mysql -h mysql.rdevopsb90.online -u root -pRoboShop@1 < {{ item }}
+  args:
+    chdir: /app/
+  loop: "{{ schema_files | default([]) }}"
