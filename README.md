@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - 13 RHEL 10 x86_64 servers, one for each component
-- Each server reachable via hostname: `<component>.rdevopsb90.online`
+- Each server reachable via hostname: `<component>-dev.rdevopsb90.online`
 - Login credentials: `ec2-user` / `DevOps321` with passwordless sudo
 - SELinux and firewalld disabled on all servers
 

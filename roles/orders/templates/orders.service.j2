@@ -11,12 +11,12 @@ Restart=on-failure
 RestartSec=10
 SyslogIdentifier=orders
 
-Environment=MONGO_URL=mongodb://mongodb.rdevopsb90.online:27017/orders
-Environment=AMQP_HOST=rabbitmq.rdevopsb90.online
+Environment=MONGO_URL=mongodb://mongodb-dev.rdevopsb90.online:27017/orders
+Environment=AMQP_HOST=rabbitmq-dev.rdevopsb90.online
 Environment=AMQP_USER=roboshop
 Environment=AMQP_PASS=RoboShop@1
-Environment=SHIPPING_URL=http://shipping.rdevopsb90.online:8004
-Environment=NOTIFICATION_URL=http://notification.rdevopsb90.online:8008
+Environment=SHIPPING_URL=http://shipping-dev.rdevopsb90.online:8004
+Environment=NOTIFICATION_URL=http://notification-dev.rdevopsb90.online:8008
 Environment=PORT=8007
 
 [Install]

@@ -6,7 +6,7 @@
 
 - name: Load MySQL schema
   ansible.builtin.shell: |
-    mysql -h mysql.rdevopsb90.online -u root -pRoboShop@1 < {{ item }}
+    mysql -h mysql-dev.rdevopsb90.online -u root -pRoboShop@1 < {{ item }}
   args:
     chdir: /app/
   loop: "{{ schema_files | default([]) }}"
