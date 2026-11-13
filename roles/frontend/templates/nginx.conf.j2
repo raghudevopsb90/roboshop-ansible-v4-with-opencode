@@ -78,6 +78,12 @@ http {
             try_files $uri $uri/index.html $uri.html /index.html;
         }
 
+        location = /health {
+            access_log off;
+            default_type application/json;
+            return 200 '{"status":"UP"}';
+        }
+
         location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2)$ {
             expires 7d;
             add_header Cache-Control "public";
